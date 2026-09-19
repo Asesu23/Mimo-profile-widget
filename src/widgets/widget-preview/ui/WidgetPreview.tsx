@@ -18,8 +18,8 @@ export function WidgetPreview({
   t: (key: string) => string;
 }) {
   return (
-    <div className="flex flex-col gap-6 sm:flex-row">
-      <aside className="flex w-full shrink-0 flex-col gap-6 sm:w-44">
+    <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+      <aside className="flex w-full shrink-0 flex-col gap-6 lg:w-60">
         <ThemePicker themeId={themeId} onChange={onThemeChange} t={t} />
 
         <div className="flex flex-col gap-2">
@@ -28,8 +28,8 @@ export function WidgetPreview({
         </div>
       </aside>
 
-      <div className="flex flex-1 items-center justify-center">
-        <img src={imageUrl} alt="Mimo stats preview" className="w-full rounded-2xl sm:w-[33vw] sm:min-w-[220px]" />
+      <div className="flex flex-1 items-center justify-center rounded-3xl border border-surface-border bg-surface-card/40 px-6 py-10 lg:px-10 lg:py-14">
+        <img src={imageUrl} alt="Mimo stats preview" className="w-full max-w-2xl rounded-2xl" />
       </div>
     </div>
   );

@@ -44,28 +44,32 @@ export function WidgetGeneratorPage() {
   }
 
   const header = (
-    <header className="flex flex-col items-center gap-1 text-center">
-      <h1 className="text-2xl font-bold tracking-tight text-white">{t('title')}</h1>
-      <p className="text-sm text-neutral-500">{t('subtitle')}</p>
+    <header className="flex flex-col items-center gap-2 text-center">
+      <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{t('title')}</h1>
+      <p className="text-base text-neutral-500">{t('subtitle')}</p>
     </header>
   );
 
   return (
-    <main className="relative flex min-h-screen flex-col overflow-hidden bg-surface px-6 py-16">
+    <main className="relative flex min-h-screen flex-col overflow-hidden bg-surface px-6 py-10 sm:px-10 lg:px-16 lg:py-14">
       <div
-        className="pointer-events-none absolute -right-40 -top-40 h-[480px] w-[480px] rounded-full opacity-20 blur-[120px]"
+        className="pointer-events-none absolute -right-40 -top-40 h-[600px] w-[600px] rounded-full opacity-20 blur-[140px]"
+        style={{ background: 'radial-gradient(circle, #D946EF, transparent 70%)' }}
+      />
+      <div
+        className="pointer-events-none absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full opacity-10 blur-[140px]"
         style={{ background: 'radial-gradient(circle, #D946EF, transparent 70%)' }}
       />
 
-      <div className="absolute right-6 top-6 z-10">
+      <div className="absolute right-6 top-6 z-10 sm:right-10 lg:right-16">
         <LocaleSwitch locale={locale} onToggle={() => setLocale(locale === 'en' ? 'ru' : 'en')} />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8">
+      <div className="relative mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center gap-10">
         {status === 'connected' && widgetId ? (
           <>
             {header}
-            <section className="flex flex-col gap-8">
+            <section className="flex flex-col gap-10">
               <WidgetPreview
                 themeId={themeId}
                 onThemeChange={setThemeId}
