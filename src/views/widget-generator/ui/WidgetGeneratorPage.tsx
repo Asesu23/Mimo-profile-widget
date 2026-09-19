@@ -104,6 +104,18 @@ export function WidgetGeneratorPage() {
         className="pointer-events-none absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full opacity-10 blur-[140px]"
         style={{ background: 'radial-gradient(circle, #D946EF, transparent 70%)' }}
       />
+      <div
+        className="pointer-events-none absolute left-1/4 top-1/3 h-[320px] w-[320px] rounded-full opacity-10 blur-[120px]"
+        style={{ background: 'radial-gradient(circle, #3B82F6, transparent 70%)' }}
+      />
+      <div
+        className="pointer-events-none absolute bottom-10 right-1/4 h-[260px] w-[260px] rounded-full opacity-10 blur-[110px]"
+        style={{ background: 'radial-gradient(circle, #22C55E, transparent 70%)' }}
+      />
+      <div
+        className="pointer-events-none absolute right-1/3 top-10 h-[220px] w-[220px] rounded-full opacity-10 blur-[100px]"
+        style={{ background: 'radial-gradient(circle, #F97316, transparent 70%)' }}
+      />
 
       <div className="absolute right-6 top-6 z-10 sm:right-10 lg:right-16">
         <LocaleSwitch locale={locale} onToggle={() => setLocale(locale === 'en' ? 'ru' : 'en')} />
