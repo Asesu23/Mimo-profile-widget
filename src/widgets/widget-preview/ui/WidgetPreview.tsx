@@ -28,10 +28,15 @@ export function WidgetPreview({
         </div>
       </aside>
 
-      <div className="flex flex-1 flex-col items-center gap-3">
-        <span className="self-start text-[11px] font-medium text-neutral-500">{t('readmePreview')}</span>
-
+      <div className="flex flex-1 flex-col items-center">
         <div className="w-full max-w-3xl overflow-hidden rounded-lg border border-[#30363d] bg-[#0d1117] shadow-sm">
+          <div className="flex items-center gap-2 border-b border-[#30363d] bg-[#161b22] px-6 py-3">
+            <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0 fill-[#7d8590]">
+              <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533ZM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+            </svg>
+            <span className="text-xs font-medium text-[#7d8590]">{t('readmePreview')}</span>
+          </div>
+
           <div className="flex flex-col gap-8 p-6 sm:flex-row sm:p-8">
             <aside className="flex w-full shrink-0 flex-col gap-3 sm:w-52">
               <div className="flex h-28 w-28 items-center justify-center rounded-full border border-[#30363d] bg-[#161b22]">

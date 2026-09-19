@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { DEFAULT_THEME_ID } from '@entities/widget-theme';
+import { useEffect, useMemo, useState } from 'react';
+import { DEFAULT_THEME_ID, THEMES } from '@entities/widget-theme';
 import { ALL_STATS, type StatKey } from '@entities/widget-stat';
 import { useConnectAccount } from '@features/connect-account';
 import { disconnectAccount } from '@features/disconnect-account';
@@ -12,6 +12,32 @@ import { ConnectForm } from '@widgets/connect-form';
 import { WidgetPreview } from '@widgets/widget-preview';
 import { WidgetLinks } from '@widgets/widget-links';
 
+function buildWidgetUrl(origin: string, widgetId: string, themeId: string, stats: StatKey[]) {
+  const params = new URLSearchParams();
+  if (themeId !== DEFAULT_THEME_ID) params.set('theme', themeId);
+  if (stats.length !== ALL_STATS.length) params.set('stats', stats.join(','));
+  const query = params.toString();
+  return `${origin}/api/widget/${widgetId}${query ? `?${query}` : ''}`;
+}
+
+function nonEmptyStatSubsets(): StatKey[][] {
+  const subsets: StatKey[][] = [];
+  const total = 1 << ALL_STATS.length;
+  for (let mask = 1; mask < total; mask++) {
+    subsets.push(ALL_STATS.filter((_, index) => mask & (1 << index)));
+  }
+  return subsets;
+}
+
+function preloadImage(url: string): Promise<void> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve();
+    img.onerror = () => resolve();
+    img.src = url;
+  });
+}
+
 export function WidgetGeneratorPage() {
   const { locale, setLocale, t } = useTranslation();
   const { email, setEmail, password, setPassword, status, widgetId, errorMessage, connect, reset } =
@@ -19,16 +45,40 @@ export function WidgetGeneratorPage() {
 
   const [themeId, setThemeId] = useState<string>(DEFAULT_THEME_ID);
   const [visibleStats, setVisibleStats] = useState<StatKey[]>(ALL_STATS);
+  const [isPreloading, setIsPreloading] = useState(false);
+  const [preloadProgress, setPreloadProgress] = useState({ loaded: 0, total: 0 });
 
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
 
+  useEffect(() => {
+    if (status !== 'connected' || !widgetId || !origin) return;
+
+    let cancelled = false;
+    const urls = Object.keys(THEMES).flatMap((theme) =>
+      nonEmptyStatSubsets().map((stats) => buildWidgetUrl(origin, widgetId, theme, stats)),
+    );
+
+    setIsPreloading(true);
+    setPreloadProgress({ loaded: 0, total: urls.length });
+
+    Promise.all(
+      urls.map((url) =>
+        preloadImage(url).then(() => {
+          if (!cancelled) setPreloadProgress((prev) => ({ ...prev, loaded: prev.loaded + 1 }));
+        }),
+      ),
+    ).then(() => {
+      if (!cancelled) setIsPreloading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status, widgetId, origin]);
+
   const imageUrl = useMemo(() => {
     if (!widgetId) return '';
-    const params = new URLSearchParams();
-    if (themeId !== DEFAULT_THEME_ID) params.set('theme', themeId);
-    if (visibleStats.length !== ALL_STATS.length) params.set('stats', visibleStats.join(','));
-    const query = params.toString();
-    return `${origin}/api/widget/${widgetId}${query ? `?${query}` : ''}`;
+    return buildWidgetUrl(origin, widgetId, themeId, visibleStats);
   }, [widgetId, themeId, visibleStats, origin]);
 
   const markdown = widgetId ? `[![Mimo Stats](${imageUrl})](https://mimo.org)` : '';
@@ -67,20 +117,43 @@ export function WidgetGeneratorPage() {
 
       <div className="relative mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center gap-10">
         {status === 'connected' && widgetId ? (
-          <>
-            {header}
-            <section className="flex flex-col gap-10">
-              <WidgetPreview
-                themeId={themeId}
-                onThemeChange={setThemeId}
-                visibleStats={visibleStats}
-                onToggleStat={toggleStat}
-                imageUrl={imageUrl}
-                t={t}
-              />
-              <WidgetLinks imageUrl={imageUrl} markdown={markdown} onDisconnect={handleDisconnect} t={t} />
-            </section>
-          </>
+          isPreloading ? (
+            <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
+              <span className="h-10 w-10 animate-spin rounded-full border-2 border-white/15 border-t-accent" />
+              <div className="flex flex-col gap-1">
+                <p className="text-lg font-semibold text-white">{t('preloadingTitle')}</p>
+                <p className="text-sm text-neutral-500">{t('preloadingSubtitle')}</p>
+              </div>
+              <div className="w-full max-w-xs">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className="h-full rounded-full bg-accent transition-all duration-200"
+                    style={{
+                      width: `${preloadProgress.total > 0 ? Math.round((preloadProgress.loaded / preloadProgress.total) * 100) : 0}%`,
+                    }}
+                  />
+                </div>
+                <p className="mt-2 font-mono text-xs text-neutral-500">
+                  {preloadProgress.loaded} / {preloadProgress.total}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              {header}
+              <section className="flex flex-col gap-10">
+                <WidgetPreview
+                  themeId={themeId}
+                  onThemeChange={setThemeId}
+                  visibleStats={visibleStats}
+                  onToggleStat={toggleStat}
+                  imageUrl={imageUrl}
+                  t={t}
+                />
+                <WidgetLinks imageUrl={imageUrl} markdown={markdown} onDisconnect={handleDisconnect} t={t} />
+              </section>
+            </>
+          )
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center gap-8">
             {header}
