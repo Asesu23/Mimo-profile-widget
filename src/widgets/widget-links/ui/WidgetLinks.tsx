@@ -17,7 +17,7 @@ export function WidgetLinks({
   const { copied, copy } = useCopyToClipboard();
 
   return (
-    <div className="flex flex-col gap-3 border-t border-surface-border pt-6">
+    <div className="flex flex-col gap-3 border-t border-surface-border pt-8">
       <Field
         label={t('imageUrl')}
         value={imageUrl}

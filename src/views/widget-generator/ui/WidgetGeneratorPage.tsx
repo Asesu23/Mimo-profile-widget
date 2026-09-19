@@ -109,7 +109,7 @@ export function WidgetGeneratorPage() {
         <LocaleSwitch locale={locale} onToggle={() => setLocale(locale === 'en' ? 'ru' : 'en')} />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center gap-10">
+      <div className="relative mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center gap-12">
         {status === 'connected' && widgetId ? (
           isPreloading ? (
             <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
@@ -135,7 +135,7 @@ export function WidgetGeneratorPage() {
           ) : (
             <>
               <Header align="left" />
-              <section className="flex flex-col gap-10">
+              <section className="flex flex-col gap-8">
                 <WidgetPreview
                   themeId={themeId}
                   onThemeChange={setThemeId}
