@@ -20,15 +20,6 @@ function buildWidgetUrl(origin: string, widgetId: string, themeId: string, stats
   return `${origin}/api/widget/${widgetId}${query ? `?${query}` : ''}`;
 }
 
-function nonEmptyStatSubsets(): StatKey[][] {
-  const subsets: StatKey[][] = [];
-  const total = 1 << ALL_STATS.length;
-  for (let mask = 1; mask < total; mask++) {
-    subsets.push(ALL_STATS.filter((_, index) => mask & (1 << index)));
-  }
-  return subsets;
-}
-
 function preloadImage(url: string): Promise<void> {
   return new Promise((resolve) => {
     const img = new Image();
@@ -36,6 +27,18 @@ function preloadImage(url: string): Promise<void> {
     img.onerror = () => resolve();
     img.src = url;
   });
+}
+
+function Header({ align }: { align: 'left' | 'center' }) {
+  const { t } = useTranslation();
+  const isCenter = align === 'center';
+
+  return (
+    <header className={`flex flex-col gap-2 ${isCenter ? 'items-center text-center' : 'items-start text-left'}`}>
+      <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{t('title')}</h1>
+      <p className="text-base text-neutral-500">{t('subtitle')}</p>
+    </header>
+  );
 }
 
 export function WidgetGeneratorPage() {
@@ -54,9 +57,7 @@ export function WidgetGeneratorPage() {
     if (status !== 'connected' || !widgetId || !origin) return;
 
     let cancelled = false;
-    const urls = Object.keys(THEMES).flatMap((theme) =>
-      nonEmptyStatSubsets().map((stats) => buildWidgetUrl(origin, widgetId, theme, stats)),
-    );
+    const urls = Object.keys(THEMES).map((theme) => buildWidgetUrl(origin, widgetId, theme, ALL_STATS));
 
     setIsPreloading(true);
     setPreloadProgress({ loaded: 0, total: urls.length });
@@ -92,13 +93,6 @@ export function WidgetGeneratorPage() {
   function toggleStat(key: StatKey) {
     setVisibleStats((current) => toggleStatKey(current, key));
   }
-
-  const header = (
-    <header className="flex flex-col items-center gap-2 text-center">
-      <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{t('title')}</h1>
-      <p className="text-base text-neutral-500">{t('subtitle')}</p>
-    </header>
-  );
 
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-surface px-6 py-10 sm:px-10 lg:px-16 lg:py-14">
@@ -140,7 +134,7 @@ export function WidgetGeneratorPage() {
             </div>
           ) : (
             <>
-              {header}
+              <Header align="left" />
               <section className="flex flex-col gap-10">
                 <WidgetPreview
                   themeId={themeId}
@@ -156,7 +150,7 @@ export function WidgetGeneratorPage() {
           )
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center gap-8">
-            {header}
+            <Header align="center" />
             <div className="w-full max-w-lg">
               <ConnectForm
                 email={email}
