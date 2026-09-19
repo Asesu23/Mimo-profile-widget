@@ -18,7 +18,7 @@ export function WidgetPreview({
   t: (key: string) => string;
 }) {
   return (
-    <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-end">
+    <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
       <aside className="flex w-full shrink-0 flex-col gap-6 lg:w-60">
         <ThemePicker themeId={themeId} onChange={onThemeChange} t={t} />
 
