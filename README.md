@@ -82,29 +82,3 @@ src/
   entities/   domain building blocks (theme, stats, stat icons, mascot, token storage)
   shared/     framework-agnostic building blocks (i18n, SVG builder, Redis/Firebase clients, UI primitives)
 ```
-
-Imports only point downward — `pages` can reach into `widgets`, `features`, and `entities`, never the reverse. Path aliases (`@pages/*`, `@widgets/*`, `@features/*`, `@entities/*`, `@shared/*`) mirror this layout.
-
-## Setup
-
-```bash
-npm install
-cp .env.example .env.local
-```
-
-In `.env.local`:
-
-- `WIDGET_ENCRYPTION_KEY` — generate with `openssl rand -base64 32`
-- `KV_REST_API_URL` / `KV_REST_API_TOKEN` — provided by the "Upstash for Redis" integration once connected in Vercel (Storage → Marketplace Database Providers); pull them down with `vercel env pull .env.local`
-
-```bash
-npm run dev
-```
-
-## Deploy
-
-```bash
-vercel deploy
-```
-
-Add an Upstash Redis database from the Vercel dashboard first, and set `WIDGET_ENCRYPTION_KEY` before deploying to production.
