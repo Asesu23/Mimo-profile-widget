@@ -68,17 +68,3 @@ When someone loads that URL, the server checks a short-lived cache before hittin
 * **[Upstash Redis](https://upstash.com/)** — encrypted token storage and the stats cache
 * **Node's `crypto`** — AES-256-GCM encryption at rest
 * **Firebase Identity Platform** — same auth backend Mimo's own app uses
-
-## Project layout
-
-Routing lives in `app/` and stays thin — everything else sits under `src/`, split into Feature-Sliced Design layers:
-
-```
-src/
-  app/        global styles
-  pages/      composes widgets into the single page
-  widgets/    self-contained UI blocks (connect form, widget preview, widget links)
-  features/   user actions (connect/disconnect, toggle a theme or stat, copy to clipboard)
-  entities/   domain building blocks (theme, stats, stat icons, mascot, token storage)
-  shared/     framework-agnostic building blocks (i18n, SVG builder, Redis/Firebase clients, UI primitives)
-```
